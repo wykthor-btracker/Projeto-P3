@@ -1,39 +1,29 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[1]:
-
 import os
 import datetime
 import subprocess
-#import shutil
 import pandas
 import tkinter as tk
-from tkinter import messagebox
-from os import listdir
+
+
 #Inicialização de variáveis
 patients = [];
 errors = [];
-stop = False;
-# chrome_path = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
-# chrome_path =
+chrome_path = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
+stop = False
 save = False
 forward = 0
 data = pandas.read_excel("Output.xlsx")
+erros = pandas.read_excel("Erros.xlsx")
 
 os.chdir("./Pacientes")
-patients = [listdir(".")[0]]
+#patients = [os.listdir(".")[0]]
+
 
 def ordenarArquivos(files):
     return sorted(files,key=lambda x:int(x.split("-")[0].rstrip()))
-
-def pegaNum(texto):
-    return int(texto[0].rstrip())
-
-def pegarAnterior(nome,lista):
-    separado = nome.split("-")
-    sufixo = separado[1].lstrip()[0]
-    current = pegaNum(separado[0])
 
 #Retorna os nomes de todos os arquivos no diretório atual
 def storeFiles():
@@ -43,8 +33,7 @@ def storeFiles():
         #files.append(file)
     return file
 
-
-
+#Inicializa um dataframe para o paciente
 def createPatientDF(name):
     patientDF = pandas.DataFrame(columns = ['Nome', 'Registro', "Data da cirurgia", "Olho", "Dioptria", "Marca da Lente", 
                                             "Modelo da Lente","Data Pré-op", "Esférico Pré-op", "Cilindro Pré-op", 
@@ -55,15 +44,18 @@ def createPatientDF(name):
 
 #Função que abre cada prontuário cirúrgico na pasta atual
 def getSurgeries(patientDF, files):
+    global stop
     global forward
-    files = ordenarArquivos(files)
+    #files = ordenarArquivos(files)
+    print(files)
     prontuarios = [file for file in files if "PRONTU" in file]
     utilizaveis = []
     ind = 0
-    x = patientDF
-    while(ind<len(prontuarios)):
-        subprocess.Popen(["firefox", prontuarios[ind]])
-        x, pront = prontuario(x)
+    patientDF = patientDF
+    
+    while(ind<len(prontuarios) and not stop):
+        subprocess.Popen([chrome_path, prontuarios[ind]])
+        patientDF, pront = prontuario(patientDF)
         if(forward == 1):
             ind+=1
             forward = 0
@@ -74,11 +66,15 @@ def getSurgeries(patientDF, files):
             raise Exception("{} inválido, 1 ou -1 esperado.".format(forward))
         if pront > 0:
             utilizaveis.append(prontuarios[ind-1])
-        print(x)
-        if x.loc[0]['Olho'] == None:
-            x = x.drop(index=0).reset_index().drop(columns=['index'])#ok
-    return x, utilizaveis
+    if patientDF.loc[0]['Olho'] == None:
+        patientDF = patientDF.drop(index=0).reset_index().drop(columns=['index'])#ok
+    if len(utilizaveis)>2:
+        errors.append(patientDF.loc[0]['Nome'])
+    #os.system('taskkill /f /im chrome.exe')
+    
+    return patientDF, utilizaveis
 
+#Gambiarra, salva os dados no prontuário e avança para a próxima tela
 def storeSave(instance):
     global save 
     save = True;
@@ -94,7 +90,7 @@ def prontuario(patientDF):
     root = tk.Tk()
     root.attributes("-topmost", True)
     tk.Label(root, text="Registro").grid(row=0)
-    tk.Label(root, text="Data da Cirurgia (apenas números)").grid(row=1)
+    tk.Label(root, text="Data da Cirurgia ('DDMMAAAA')").grid(row=1)
     tk.Label(root, text="Olho (OE ou OD)").grid(row=2)
     tk.Label(root, text="Dioptria").grid(row=3)
     tk.Label(root, text="Marca da Lente").grid(row=4)
@@ -134,7 +130,6 @@ def prontuario(patientDF):
                                                       modelo.get(), patientDF)
         print(patientDF)
         save = False
-        # avancar(root)
 
     #Caso não esteja vazio, consideramos que o prontuário é válido
     if olho.get() == 'OE' or olho.get() == 'OD':
@@ -142,16 +137,13 @@ def prontuario(patientDF):
 
     return patientDF, pront
 
-
-# In[12]:
-
-
 #Salva os dados coletados na interface para o dataframe do paciente, criando uma entrada para cada cirurgia.
 def salvarDadosCir(reg, data, olho, dioptria, lente, modelo, patientDF):
     name = patientDF.loc[0]['Nome']
     patientDF.loc[patientDF.shape[0]] = [name, reg, data, olho, dioptria, lente, modelo, None, None, None, None, None, None, None, None]
     return patientDF
 
+#Salva os dados coletados na interface para o dataframe do paciente
 def salvarDadosFicha(data, esfE, esfD, cilE, cilD, eixoE, eixoD, patientDF, pre):
     name = patientDF.loc[0]['Nome']
     patientDF = patientDF.drop([0]).reset_index().drop(columns=['index'])
@@ -164,49 +156,33 @@ def salvarDadosFicha(data, esfE, esfD, cilE, cilD, eixoE, eixoD, patientDF, pre)
                 newRow[8] = esfE
                 newRow[9] = cilE
                 newRow[10] = eixoE
-                '''patientDF.loc[ind]['Data Pré-op'] = data
-                patientDF.loc[ind]['Esférico Pré-op'] = esfE
-                patientDF.loc[ind]['Cilindro Pré-op'] = cilE
-                patientDF.loc[ind]['Eixo Pré-op'] = eixoE'''
             else:
                 newRow[11] = data
                 newRow[12] = esfE
                 newRow[13] = cilE
                 newRow[14] = eixoE
-                '''patientDF.loc[ind]['Data Pós-op'] = data
-                patientDF.loc[ind]['Esférico Pós-op'] = esfE
-                patientDF.loc[ind]['Cilindro Pós-op'] = cilE
-                patientDF.loc[ind]['Eixo Pós-op'] = eixoE'''
         else:
             if pre:
                 newRow[7] = data
                 newRow[8] = esfD
                 newRow[9] = cilD
                 newRow[10] = eixoD
-                '''patientDF.loc[ind]['Data Pré-op'] = data
-                patientDF.loc[ind]['Esférico Pré-op'] = esfD
-                patientDF.loc[ind]['Cilindro Pré-op'] = cilD
-                patientDF.loc[ind]['Eixo Pré-op'] = eixoD'''
             else:
                 newRow[11] = data
                 newRow[12] = esfD
                 newRow[13] = cilD
                 newRow[14] = eixoD
-                '''patientDF.loc[ind]['Data Pós-op'] = data
-                patientDF.loc[ind]['Esférico Pós-op'] = esfD
-                patientDF.loc[ind]['Cilindro Pós-op'] = cilD
-                patientDF.loc[ind]['Eixo Pós-op'] = eixoD'''
         print(len(newRow))
         patientDF.loc[ind] = newRow
     return patientDF
 
-
+#Volta para a última ficha ou prontuário
 def voltar(instance):
     global forward
     instance.destroy()
     forward = -1
 
-#Entra no próximo loop para cada paciente
+#Vai para a próxima ficha ou prontuário
 def avancar(instance):
     global forward
     instance.destroy()
@@ -217,6 +193,7 @@ def salvarErro(patientDF,instance):
     errors.append(patientDF.loc[0]['Nome'])
     instance.destroy()
 
+#Para o programa
 def sair(instance):
     instance.destroy()
     stop = True;
@@ -293,14 +270,21 @@ def ficha(patientDF, pre):
         
     return patientDF
 
+def quebrarLista(pronts, files):
+    return files[0:files.index(pronts[0])], files[files.index(pronts[1])+1:]
+
 
 #Iterando pelos pacientes
 for patient in patients:
     if not stop:
         os.chdir("./" + patient)
         files = storeFiles()
+        print(files)
         patientDF = createPatientDF(patient)
         patientDF, pronts = getSurgeries(patientDF, files)
+        listaPre, listaPos = quebrarLista(pronts, files)
+        print(listaPre)
+        print(listaPos)
 
 def main():
     pass
