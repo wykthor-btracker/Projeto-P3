@@ -11,7 +11,7 @@ from os import getcwd
 currDir = os.getcwd()
 patients = [];
 errors = [];
-chrome_path = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
+chrome_path = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 # chrome_path = "firefox"
 stop = False
 save = False
@@ -395,8 +395,8 @@ def getFichas(patientDF, fichas, boolean):
 #ATENÇÃO! O CHROME PRECISA ESTAR ABERTO PARA FUNCIONAR
 
 for patient in patients:
-    if not stop and patient not in list(data['Nome']) and patient not in (list(erros['Nome'])):
-        os.chdir(currDir + "\\Pacientes\\" + patient)
+    if not stop and patient not in list(data['Nome']) and patient not in (list(erros['Nome'])) and not patient.startswith('.'):
+        os.chdir(currDir + "/Pacientes/" + patient)
         files = storeFiles()
         patientDF = createPatientDF(patient)
         patientDF, pronts = getSurgeries(patientDF, files)
