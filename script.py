@@ -54,9 +54,9 @@ def getSurgeries(patientDF, files):
         subprocess.Popen([chrome_path, prontuarios[ind]])
         patientDF, pront = prontuario(patientDF, ind+1, len(prontuarios))
         if patientDF['Nome'][0] in errors:
-            return patientDF, [];
+            return patientDF, []
         if stop:
-            return createPatientDF('STOP'), [];
+            return createPatientDF('STOP'), []
         if(forward == 1):
             ind+=1
             forward = 0
@@ -87,7 +87,7 @@ def getSurgeries(patientDF, files):
 #Gambiarra, salva os dados no prontuário e avança para a próxima tela
 def storeSave(instance,flag):
     global save 
-    save = True;
+    save = True
     flag[0] = True
     avancar(instance)
 
@@ -359,9 +359,9 @@ def getFichas(patientDF, fichas, boolean):
         subprocess.Popen([chrome_path, fichas[ind]])
         patientDF, flag = ficha(patientDF, boolean, ind+1, len(fichas))
         if stop:
-            return createPatientDF("STOP");
+            return createPatientDF("STOP")
         if patientDF['Nome'][0] in errors:
-            break;
+            break
         if(forward == 1):
             if (ind != len(fichas) - 1):
                 ind+=1
@@ -374,7 +374,6 @@ def getFichas(patientDF, fichas, boolean):
             raise Exception("{} inválido, 1 ou -1 esperado.".format(forward))
         if(flag):
             break
-    #os.system('taskkill /f /im chrome.exe')    
     return patientDF
 
 #Iterando pelos pacientes
