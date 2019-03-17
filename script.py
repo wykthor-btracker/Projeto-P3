@@ -92,18 +92,18 @@ def storeSave(instance,flag):
     avancar(instance)
 
 #Cria um campo para preenchimento da ficha correspondente
-def addField(root, Titulo, row):
+def criarCampo(root, Titulo, row):
     tk.Label(root, text=Titulo).grid(row=row)
-    reg = tk.StringVar()
-    regEntry = tk.Entry(root, textvariable=reg)
-    regEntry.grid(row=row, column=1)
-    return reg
+    campo = tk.StringVar()
+    entradaTexto = tk.Entry(root, textvariable=campo)
+    entradaTexto.grid(row=row, column=1)
+    return campo
 
 def drawEntries(campos,root):
     entries = []
     for linha in range(len(campos)):
         titulo = campos[linha]
-        entries.append(addField(root,titulo,linha))
+        entries.append(criarCampo(root,titulo,linha))
     return entries
 
 def getEntries(entries):
