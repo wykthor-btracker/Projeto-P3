@@ -91,6 +91,14 @@ def storeSave(instance,flag):
     flag[0] = True
     avancar(instance)
 
+#Cria um campo para preenchimento da ficha correspondente
+def addField(root, Titulo, row):
+    tk.Label(root, text=Titulo).grid(row=row)
+    reg = tk.StringVar()
+    regEntry = tk.Entry(root, textvariable=reg)
+    regEntry.grid(row=row, column=1)
+    return reg
+
 #Função que cria a interface e lida com os dados das fichas de atendimento
 def prontuario(patientDF, currFile, totalFiles):
 
@@ -102,37 +110,14 @@ def prontuario(patientDF, currFile, totalFiles):
     root.attributes("-topmost", True)
     root.geometry("500x230")
     root.title(patientDF['Nome'][0] + ' - Prontuário ' + str(currFile) + ' de ' + str(totalFiles))
-    tk.Label(root, text="Registro").grid(row=0)
-    tk.Label(root, text="Data da Cirurgia ('DDMMAAAA')").grid(row=1)
-    tk.Label(root, text="Idade (Anos Completos)").grid(row=2)
-    tk.Label(root, text="Olho (OE ou OD)").grid(row=3)
-    tk.Label(root, text="Dioptria").grid(row=4)
-    tk.Label(root, text="Marca da Lente").grid(row=5)
-    tk.Label(root, text="Modelo da Lente").grid(row=6)
-    
-    reg = tk.StringVar()
-    data = tk.StringVar()
-    idade = tk.StringVar()
-    olho = tk.StringVar()
-    dioptria = tk.StringVar()
-    marca = tk.StringVar()
-    modelo = tk.StringVar()
-    
-    regEntry = tk.Entry(root, textvariable=reg)
-    dataEntry = tk.Entry(root, textvariable=data)
-    idadeEntry = tk.Entry(root, textvariable=idade)
-    olhoEntry = tk.Entry(root, textvariable=olho)
-    dioptriaEntry = tk.Entry(root, textvariable=dioptria)
-    marcaEntry = tk.Entry(root, textvariable=marca)
-    modeloEntry = tk.Entry(root, textvariable=modelo)
-
-    regEntry.grid(row=0, column=1)
-    dataEntry.grid(row=1, column=1)
-    idadeEntry.grid(row=2, column=1)
-    olhoEntry.grid(row=3, column=1)
-    dioptriaEntry.grid(row=4, column=1)
-    marcaEntry.grid(row=5, column=1)
-    modeloEntry.grid(row=6, column=1)
+    campos = ["Registro",
+              "Data da Cirurgia ('DDMMAAAA')",
+              "Idade",
+              "Olho (OE ou OD)",
+              "Dioptria",
+              "Modelo da Lente"]
+    for campo in range(len(campos)):
+        addField(root,campos[campo],campo)
 
     tk.Button(root, text="Anterior", command=lambda: voltar(root)).grid(row=7, column=0, pady=4)
     tk.Button(root, text="Ok", command=lambda: storeSave(root,[None])).grid(row=7, column=1, pady=4)
