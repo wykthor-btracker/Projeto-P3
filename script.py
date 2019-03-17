@@ -286,21 +286,19 @@ def salvarErro(patientDF,instance):
 def sair(instance):
     global stop
     instance.destroy()
-    stop = True;
+    stop = True
 
 
-#Transforma uma string do tipo "DDMMYYYY" em um datetime
+#Transforma uma string do tipo "DD(/-)MM(/-)YYYY" em um datetime
 def processarData(data):
-    if '/' in data:
-        data = data.replace('/', '')
-    elif '-' in data:
-        data = data.replace('-', '')
-    if len(data) == 6:
-        data = data = data[0:4] + '20' + data[4:]
-    day = int(data[0:2])
-    month = int(data[2:4])
-    year = int(data[4:])
-    return datetime.date(year, month, day)
+    formatos = ["%d%m%Y","%d/%m/%Y","%d-%m-%Y"]
+    for formato in formatos:
+        try:
+            date = pandas.to_datetime(data,format=formato)
+            return date
+        except:
+            pass
+            #TODO mostrar uma mensagem de erro.
 
 #Transforma uma string com a dioptria em um float. Lida tanto com vírgula quanto com ponto.
 def processarFloat(string):
