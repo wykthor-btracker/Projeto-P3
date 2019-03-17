@@ -127,8 +127,7 @@ def prontuario(patientDF, currFile, totalFiles):
               "Marca da Lente",
               "Modelo da Lente"]
     resultados = drawEntries(campos,root)
-
-    tk.Button(root, text="Anterior", command=lambda: voltar(root)).grid(row=7, column=0, pady=4)
+    criarBotao("Anterior",root,7,0,voltar,root) #TODO extract class
     tk.Button(root, text="Ok", command=lambda: storeSave(root,[None])).grid(row=7, column=1, pady=4)
     tk.Button(root, text="Próximo", command=lambda: avancar(root)).grid(row=7, column=2, pady=4)
     tk.Button(root, text="Erro", command= lambda: salvarErro(patientDF,root)).grid(row=8, column=0, pady=4)
@@ -147,6 +146,10 @@ def prontuario(patientDF, currFile, totalFiles):
     pront = 1
 
     return patientDF, pront
+
+
+def criarBotao(text,root,row,column,func,*args,**kwargs):
+    tk.Button(root, text=text, command=lambda: func(*args,**kwargs)).grid(row=row, column=column, pady=4)
 
 
 #Função do botão
