@@ -99,6 +99,15 @@ def addField(root, Titulo, row):
     regEntry.grid(row=row, column=1)
     return reg
 
+def drawEntries(campos,root):
+    entries = []
+    for linha in range(len(campos)):
+        titulo = campos[linha]
+        entries.append(addField(root,titulo,linha))
+    return entries
+
+def getEntries(entries):
+    return [entry.get() for entry in entries]
 #Função que cria a interface e lida com os dados das fichas de atendimento
 def prontuario(patientDF, currFile, totalFiles):
 
@@ -115,9 +124,9 @@ def prontuario(patientDF, currFile, totalFiles):
               "Idade",
               "Olho (OE ou OD)",
               "Dioptria",
+              "Marca da Lente",
               "Modelo da Lente"]
-    for campo in range(len(campos)):
-        addField(root,campos[campo],campo)
+    resultados = drawEntries(campos,root)
 
     tk.Button(root, text="Anterior", command=lambda: voltar(root)).grid(row=7, column=0, pady=4)
     tk.Button(root, text="Ok", command=lambda: storeSave(root,[None])).grid(row=7, column=1, pady=4)
@@ -127,17 +136,18 @@ def prontuario(patientDF, currFile, totalFiles):
     tk.Button(root, text="Checar data", command=lambda: descricoesCirurgicas()).grid(row=8, column=2)
     
     root.mainloop()
-    
+    resultados = getEntries(resultados)
+
     if save:
-        patientDF = salvarDadosCir(reg.get(), data.get(), idade.get(), olho.get().upper(), dioptria.get(), marca.get(),
-                                                      modelo.get(), patientDF)
+        patientDF = salvarDadosCir(*resultados, patientDF)
         save = False
 
     #Caso não esteja vazio, consideramos que o prontuário é válido
-    if olho.get().upper() == 'OE' or olho.get().upper() == 'OD':
-        pront = 1
+    # if olho.get().upper() == 'OE' or olho.get().upper() == 'OD':
+    pront = 1
 
     return patientDF, pront
+
 
 #Função do botão
 def descricoesCirurgicas():
@@ -307,51 +317,18 @@ def ficha(patientDF, pre, currFile, totalFiles):
     root.attributes("-topmost", True)
     root.title(patientDF['Nome'][0] + ' - Ficha' + str(currFile) + ' de ' + str(totalFiles))
     root.geometry("500x280")
-    
-    tk.Label(root, text="Data").grid(row=0)
-    tk.Label(root, text="Esférico OD").grid(row=1)  
-    tk.Label(root, text="Cilindro OD").grid(row=2)    
-    tk.Label(root, text="Eixo OD").grid(row=3)
-    tk.Label(root, text="Acuidade OD").grid(row=4)
-    tk.Label(root, text="Esférico OE").grid(row=5)
-    tk.Label(root, text="Cilindro OE").grid(row=6)    
-    tk.Label(root, text="Eixo OE").grid(row=7)
-    tk.Label(root, text="Acuidade OE").grid(row=8)
-    tk.Label(root, text="Usei AR (Deixar vazio se não usou)").grid(row=9)
-    tk.Label(root, text="Data da Cirurgia: " + str(patientDF['Data da cirurgia'][0].day) + '/' + str(patientDF['Data da cirurgia'][0].month) + '/' + str(patientDF['Data da cirurgia'][0].year) ).grid(row=12)
-    
-    data = tk.StringVar()
-    esfE = tk.StringVar()
-    esfD = tk.StringVar()
-    cilE = tk.StringVar()
-    cilD = tk.StringVar()
-    eixoE = tk.StringVar()
-    eixoD = tk.StringVar()
-    acuE = tk.StringVar()
-    acuD = tk.StringVar()
-    ar = tk.StringVar()
-    
-    dataEntry = tk.Entry(root, textvariable=data)
-    esfDEntry = tk.Entry(root, textvariable=esfD)
-    cilDEntry = tk.Entry(root, textvariable=cilD)
-    eixoDEntry = tk.Entry(root, textvariable=eixoD)
-    esfEEntry = tk.Entry(root, textvariable=esfE)
-    cilEEntry = tk.Entry(root, textvariable=cilE)
-    eixoEEntry = tk.Entry(root, textvariable=eixoE)
-    acuEEntry = tk.Entry(root, textvariable=acuE)
-    acuDEntry = tk.Entry(root, textvariable=acuD)
-    arEntry = tk.Entry(root, textvariable=ar)
-
-    dataEntry.grid(row=0, column=1)
-    esfDEntry.grid(row=1, column=1)
-    cilDEntry.grid(row=2, column=1)
-    eixoDEntry.grid(row=3, column=1)
-    esfEEntry.grid(row=4, column=1)
-    cilEEntry.grid(row=5, column=1)
-    eixoEEntry.grid(row=6, column=1)
-    acuEEntry.grid(row=7, column=1)
-    acuDEntry.grid(row=8, column=1)
-    arEntry.grid(row=9, column=1)
+    campos = ["Data",
+              "Esférico OD",
+              "Cilindro OD",
+              "Eixo OD",
+              "Acuidade OD",
+              "Esférico OE",
+              "Cilindro OE",
+              "Eixo OE",
+              "Acuidade OE",
+              "Usei AR (Deixar vazio se não usou)"]
+    resultados = drawEntries(campos, root)
+    #TODO tk.Label(root, text="Data da Cirurgia: " + str(patientDF['Data da cirurgia'][0].day) + '/' + str(patientDF['Data da cirurgia'][0].month) + '/' + str(patientDF['Data da cirurgia'][0].year) ).grid(row=12)
     
 
     tk.Button(root, text="Anterior", command= lambda: voltar(root)).grid(row=10, column=0, pady=4)
@@ -361,10 +338,9 @@ def ficha(patientDF, pre, currFile, totalFiles):
     tk.Button(root, text="Sair", command=     lambda: sair(root)).grid(row=11, column=1)
 
     root.mainloop()
-    
+    resultados = getEntries(resultados)
     if save:
-        patientDF = salvarDadosFicha(data.get(), esfE.get(), esfD.get(), cilE.get(), cilD.get(),
-                                                      eixoE.get(), eixoD.get(), acuE.get(), acuD.get(), ar.get(), patientDF, pre)
+        patientDF = salvarDadosFicha(*resultados, patientDF, pre)
         save = False
         
     return patientDF,flag[0]
@@ -406,6 +382,7 @@ def getFichas(patientDF, fichas, boolean):
 #Iterando pelos pacientes
 
 #ATENÇÃO! O CHROME PRECISA ESTAR ABERTO PARA FUNCIONAR
+
 
 for patient in patients:
     if not stop and patient not in list(data['Nome']) and patient not in (list(erros['Nome'])):
