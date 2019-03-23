@@ -11,17 +11,18 @@ from os import getcwd
 currDir = os.getcwd()
 patients = [];
 errors = [];
-chrome_path = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
-# chrome_path = "firefox"
+#chrome_path = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
+chrome_path = "firefox"
 stop = False
 save = False
 forward = 0
 data = pandas.read_excel("Output.xlsx")
 erros = pandas.read_excel("Erros.xlsx")
+xyProntuario = "500x250"
+xyFichas = "500x350"
 
 os.chdir("./Pacientes")
 patients = sorted(os.listdir("."))
-
 
 def ordenarArquivos(files):
     sortedFiles = sorted(files,key=lambda x:int(x.split("-")[0].rstrip()))
@@ -39,9 +40,9 @@ def storeFiles():
 def createPatientDF(name):
     patientDF = pandas.DataFrame(columns = ['Nome', 'Registro', "Data da cirurgia", 'Idade', "Olho", "Dioptria", "Marca da Lente", 
                                             "Modelo da Lente","Data Pré-op", "Esférico Pré-op", "Cilindro Pré-op", 
-                                            "Eixo Pré-op", 'AR Pré-op', "Data Pós-op", "Esférico Pós-op", "Cilindro Pós-op",
-                                            "Eixo Pós-op", 'AR Pós-op'])
-    patientDF.loc[0] = [name, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 
+                                            "Eixo Pré-op", 'Acuidade Pré-op', 'AR Pré-op', "Data Pós-op", "Esférico Pós-op", "Cilindro Pós-op",
+                                            "Eixo Pós-op", 'Acuidade Pós-op', 'AR Pós-op'])
+    patientDF.loc[0] = [name, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, None, 
                         None]
     return patientDF
 
@@ -104,7 +105,8 @@ def prontuario(patientDF, currFile, totalFiles):
     
     root = tk.Tk()
     root.attributes("-topmost", True)
-    root.title('Prontuário Cirúrgico ' + str(currFile) + ' de ' + str(totalFiles))
+    root.geometry(xyProntuario)
+    root.title(patientDF['Nome'][0] + ' - Prontuário ' + str(currFile) + ' de ' + str(totalFiles))
     tk.Label(root, text="Registro").grid(row=0)
     tk.Label(root, text="Data da Cirurgia ('DDMMAAAA')").grid(row=1)
     tk.Label(root, text="Idade (Anos Completos)").grid(row=2)
@@ -142,6 +144,7 @@ def prontuario(patientDF, currFile, totalFiles):
     tk.Button(root, text="Próximo", command=lambda: avancar(root)).grid(row=7, column=2, pady=4)
     tk.Button(root, text="Erro", command= lambda: salvarErro(patientDF,root)).grid(row=8, column=0, pady=4)
     tk.Button(root, text="Sair", command=lambda: sair(root)).grid(row=8, column=1)
+    tk.Button(root, text="Checar data", command=lambda: descricoesCirurgicas()).grid(row=8, column=2)
     
     root.mainloop()
     
@@ -155,6 +158,14 @@ def prontuario(patientDF, currFile, totalFiles):
         pront = 1
 
     return patientDF, pront
+
+#Função do botão
+def descricoesCirurgicas():
+    desc = []
+    for file in os.listdir():
+        if "DESCR" in file:
+            subprocess.Popen([chrome_path, file])
+
 
 #Salva os dados coletados na interface para o dataframe do paciente, criando uma entrada para cada cirurgia.
 def salvarDadosCir(reg, data, idade, olho, dioptria, lente, modelo, patientDF):
@@ -171,16 +182,25 @@ def salvarDadosCir(reg, data, idade, olho, dioptria, lente, modelo, patientDF):
         pass
     
     try:
-        idade = processarFloat(idade)
-    except:
-        pass
+        if int(idade) > 120:
+            print("Idade = " + str(idade))
+            dataNasc = processarData(idade)
+            print("Data de nascimento: " + str(dataNasc))
+            idadeFinal = round((datetime.datetime.now() - datetime.datetime(dataNasc.year, dataNasc.month, dataNasc.day)).days/365) 
+            print("Idade final: " + str(idadeFinal))
+            idade = idadeFinal
+        else:
+            idade = processarFloat(idade)
+    except Exception as E:
+        print(E)
+        
     
     patientDF.loc[patientDF.shape[0]] = [name, reg, data, idade, olho, dioptria, lente, modelo, None, None, None, None, None, None, 
-                                         None, None, None, None]
+                                         None, None, None, None, None, None]
     return patientDF
 
 #Salva os dados coletados na interface para o dataframe do paciente
-def salvarDadosFicha(data, esfE, esfD, cilE, cilD, eixoE, eixoD, ar, patientDF, pre):
+def salvarDadosFicha(data, esfE, esfD, cilE, cilD, eixoE, eixoD, acuE, acuD, ar, patientDF, pre):
     name = patientDF['Nome'][0]
     #Processando floats e data
     try:
@@ -226,26 +246,30 @@ def salvarDadosFicha(data, esfE, esfD, cilE, cilD, eixoE, eixoD, ar, patientDF, 
                 newRow[9] = esfE
                 newRow[10] = cilE
                 newRow[11] = eixoE
-                newRow[12] = ar
+                newRow[12] = acuE
+                newRow[13] = ar
             else:
-                newRow[13] = data
-                newRow[14] = esfE
-                newRow[15] = cilE
-                newRow[16] = eixoE
-                newRow[17] = ar
+                newRow[14] = data
+                newRow[15] = esfE
+                newRow[16] = cilE
+                newRow[17] = eixoE
+                newRow[18] = acuE
+                newRow[19] = ar
         else:
             if pre:
                 newRow[8] = data
                 newRow[9] = esfD
                 newRow[10] = cilD
                 newRow[11] = eixoD
-                newRow[12] = ar
+                newRow[12] = acuD
+                newRow[13] = ar
             else:
-                newRow[13] = data
-                newRow[14] = esfD
-                newRow[15] = cilD
-                newRow[16] = eixoD
-                newRow[17] = ar
+                newRow[14] = data
+                newRow[15] = esfD
+                newRow[16] = cilD
+                newRow[17] = eixoD
+                newRow[18] = acuD
+                newRow[19] = ar
         patientDF.loc[ind] = newRow     
     return patientDF
 
@@ -301,17 +325,20 @@ def ficha(patientDF, pre, currFile, totalFiles):
     flag = [False]
     root = tk.Tk()
     root.attributes("-topmost", True)
-    root.title('Ficha de atendimento ' + str(currFile) + ' de ' + str(totalFiles))
-    #root.geometry('400x250')
+    root.title(patientDF['Nome'][0] + ' - Ficha' + str(currFile) + ' de ' + str(totalFiles))
+    root.geometry(xyFichas)
+    
     tk.Label(root, text="Data").grid(row=0)
     tk.Label(root, text="Esférico OD").grid(row=1)  
     tk.Label(root, text="Cilindro OD").grid(row=2)    
     tk.Label(root, text="Eixo OD").grid(row=3)
-    tk.Label(root, text="Esférico OE").grid(row=4)
-    tk.Label(root, text="Cilindro OE").grid(row=5)    
-    tk.Label(root, text="Eixo OE").grid(row=6)
-    tk.Label(root, text="Usei AR (Deixar vazio se não usou)").grid(row=7)
-
+    tk.Label(root, text="Acuidade OD").grid(row=4)
+    tk.Label(root, text="Esférico OE").grid(row=5)
+    tk.Label(root, text="Cilindro OE").grid(row=6)    
+    tk.Label(root, text="Eixo OE").grid(row=7)
+    tk.Label(root, text="Acuidade OE").grid(row=8)
+    tk.Label(root, text="Usei AR (Deixar vazio se não usou)").grid(row=9)
+    tk.Label(root, text="Data da Cirurgia: " + str(patientDF['Data da cirurgia'][0].day) + '/' + str(patientDF['Data da cirurgia'][0].month) + '/' + str(patientDF['Data da cirurgia'][0].year) ).grid(row=12)
     
     data = tk.StringVar()
     esfE = tk.StringVar()
@@ -320,38 +347,44 @@ def ficha(patientDF, pre, currFile, totalFiles):
     cilD = tk.StringVar()
     eixoE = tk.StringVar()
     eixoD = tk.StringVar()
+    acuE = tk.StringVar()
+    acuD = tk.StringVar()
     ar = tk.StringVar()
     
     dataEntry = tk.Entry(root, textvariable=data)
     esfDEntry = tk.Entry(root, textvariable=esfD)
     cilDEntry = tk.Entry(root, textvariable=cilD)
     eixoDEntry = tk.Entry(root, textvariable=eixoD)
+    acuDEntry = tk.Entry(root, textvariable=acuD)
     esfEEntry = tk.Entry(root, textvariable=esfE)
     cilEEntry = tk.Entry(root, textvariable=cilE)
-    eixoEEntry = tk.Entry(root, textvariable=eixoE)    
+    eixoEEntry = tk.Entry(root, textvariable=eixoE)
+    acuEEntry = tk.Entry(root, textvariable=acuE)
     arEntry = tk.Entry(root, textvariable=ar)
 
     dataEntry.grid(row=0, column=1)
     esfDEntry.grid(row=1, column=1)
     cilDEntry.grid(row=2, column=1)
     eixoDEntry.grid(row=3, column=1)
-    esfEEntry.grid(row=4, column=1)
-    cilEEntry.grid(row=5, column=1)
-    eixoEEntry.grid(row=6, column=1)    
-    arEntry.grid(row=7, column=1)
+    acuDEntry.grid(row=4, column=1)
+    esfEEntry.grid(row=5, column=1)
+    cilEEntry.grid(row=6, column=1)
+    eixoEEntry.grid(row=7, column=1)
+    acuEEntry.grid(row=8, column=1)
+    arEntry.grid(row=9, column=1)
     
 
-    tk.Button(root, text="Anterior", command= lambda: voltar(root)).grid(row=8, column=0, pady=4)
-    tk.Button(root, text="Ok", command=       lambda: storeSave(root,flag)).grid(row=8, column=1, pady=4)
-    tk.Button(root, text="Próximo", command=  lambda: avancar(root)).grid(row=8, column=2, pady=4)
-    tk.Button(root, text="Erro", command=     lambda: salvarErro(patientDF,root)).grid(row=9, column=0, pady=4)
-    tk.Button(root, text="Sair", command=     lambda: sair(root)).grid(row=9, column=1)
+    tk.Button(root, text="Anterior", command= lambda: voltar(root)).grid(row=10, column=0, pady=4)
+    tk.Button(root, text="Ok", command=       lambda: storeSave(root,flag)).grid(row=10, column=1, pady=4)
+    tk.Button(root, text="Próximo", command=  lambda: avancar(root)).grid(row=10, column=2, pady=4)
+    tk.Button(root, text="Erro", command=     lambda: salvarErro(patientDF,root)).grid(row=11, column=0, pady=4)
+    tk.Button(root, text="Sair", command=     lambda: sair(root)).grid(row=11, column=1)
 
     root.mainloop()
     
     if save:
         patientDF = salvarDadosFicha(data.get(), esfE.get(), esfD.get(), cilE.get(), cilD.get(),
-                                                      eixoE.get(), eixoD.get(), ar.get(), patientDF, pre)
+                                                      eixoE.get(), eixoD.get(), acuE.get(), acuD.get(), ar.get(), patientDF, pre)
         save = False
         
     return patientDF,flag[0]
@@ -396,11 +429,11 @@ def getFichas(patientDF, fichas, boolean):
 
 for patient in patients:
     if not stop and patient not in list(data['Nome']) and patient not in (list(erros['Nome'])):
-        os.chdir(currDir + "\\Pacientes\\" + patient)
+        os.chdir(currDir + "/Pacientes/" + patient)
         files = storeFiles()
         patientDF = createPatientDF(patient)
         patientDF, pronts = getSurgeries(patientDF, files)
-        if len(pronts) > 2 or len(pronts) == 0:
+        if len(pronts) > 2 or len(pronts) == 0 or patientDF['Data da cirurgia'][0] == None:
             os.chdir(currDir)
             erros.to_excel('Erros.xlsx')
             continue
@@ -421,4 +454,7 @@ for patient in patients:
                 data = pandas.concat([data,patientDF])
         os.chdir(currDir)
         data.to_excel('Output.xlsx')
+
+
+print("Seu bloquinho acabou, pegue o próximo!!")
         
