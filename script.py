@@ -8,8 +8,8 @@ import tkinter as tk
 currDir = os.getcwd()
 patients = []
 errors = []
-chrome_path = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
-# chrome_path = "firefox"
+#chrome_path = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
+chrome_path = "firefox"
 stop = False
 save = False
 forward = 0
@@ -108,6 +108,7 @@ def drawEntries(campos,root):
 
 def getEntries(entries):
     return [entry.get() for entry in entries]
+
 #Função que cria a interface e lida com os dados das fichas de atendimento
 def prontuario(patientDF, currFile, totalFiles):
 
@@ -386,7 +387,7 @@ def getFichas(patientDF, fichas, boolean):
 
 for patient in patients:
     if not stop and patient not in list(data['Nome']) and patient not in (list(erros['Nome'])):
-        os.chdir(currDir + "\\Pacientes\\" + patient)
+        os.chdir(currDir + "/Pacientes/" + patient)
         files = storeFiles()
         patientDF = createPatientDF(patient)
         patientDF, pronts = getSurgeries(patientDF, files)
