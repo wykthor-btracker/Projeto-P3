@@ -105,16 +105,6 @@ class CampoTexto(interface.DrawableWidget):
 
 # # main
 def main(*args, **kwargs):
-    campos = ["Oi","Tudo bom","iai", "FOFOFOFOFO"]
-    coisas = []
-    for index in range(len(campos)):
-        coisas.append(CampoTexto(campos[index],index,0))
-    wid = TextWidgets(coisas)
-    botao = Botao("Hi",4,0,lambda x:print(x),[5])
-    botoes = WidgetList([botao])
-    jan = JanelaTkinter(400,400,[wid,botoes])
-    jan.desenharInterface()
-    print(jan.coletarDados())
     return
 
 

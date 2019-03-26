@@ -13,7 +13,7 @@ from abc import ABC, abstractmethod
 
 class Diretorio(ABC):
     def __init__(self,caminhoDiretorio):
-        self.caminhoDiretorio = caminhoDiretorio
+        self.caminho = caminhoDiretorio
         self.ClasseArquivo = None
 
     @abstractmethod
@@ -82,6 +82,9 @@ class SalvarDados(ABC):
     def find(self):
         pass
 
+    @abstractmethod
+    def getDataObject(self):
+        pass
 class Coleta(ABC):
     def __init__(self,IGrafica,IDiretorio,ISalvar):
         self.IGrafica = IGrafica
