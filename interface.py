@@ -17,19 +17,15 @@ class Diretorio(ABC):
         self.ClasseArquivo = None
 
     @abstractmethod
-    def isFile(self):
+    def isFile(self,caminho):
         pass
 
     @abstractmethod
-    def isFolder(self):
+    def isFolder(self,caminho):
         pass
 
     @abstractmethod
-    def abrirArquivo(self):
-        pass
-
-    @abstractmethod
-    def abrirDiretorio(self):
+    def abrirArquivo(self,caminho):
         pass
 
     @abstractmethod
@@ -41,7 +37,11 @@ class Diretorio(ABC):
         pass
 
     @abstractmethod
-    def irParaDiretorio(self):
+    def irParaDiretorio(self,caminho):
+        pass
+
+    @abstractmethod
+    def __repr__(self):
         pass
 
 
@@ -57,10 +57,19 @@ class Arquivo(ABC):
     def ler(self):
         pass
 
+    @abstractmethod
+    def __eq__(self,other):
+        pass
+
+    @abstractmethod
+    def __contains__(self, item):
+        pass
+
 
 class SalvarDados(ABC):
-    def __init__(self,colunas):
+    def __init__(self,colunas,index):
         self.colunas = colunas
+        self.index = index
 
     @abstractmethod
     def limpar(self):
@@ -85,18 +94,23 @@ class SalvarDados(ABC):
     @abstractmethod
     def getDataObject(self):
         pass
+
+    @abstractmethod
+    def saveToFile(self):
+        pass
+
+
 class Coleta(ABC):
-    def __init__(self,IGrafica,IDiretorio,ISalvar):
-        self.IGrafica = IGrafica
-        self.IDiretorio = IDiretorio
-        self.ISalvar = ISalvar
+    def __init__(self,IGraficacls,IDiretoriocls,ISalvarcls):
+        self.IGraficacls = IGraficacls
+        self.IDiretoriocls = IDiretoriocls
+        self.ISalvarcls = ISalvarcls
+        self.ISalvar = None
+        self.IGrafico = None
+        self.IDiretorio = None
 
     @abstractmethod
     def abrirDiretorio(self):
-        pass
-
-    @abstractmethod
-    def proximoArquivo(self):
         pass
 
     @abstractmethod
@@ -120,9 +134,24 @@ class Coleta(ABC):
         pass
 
     @abstractmethod
-    def initDiretorio(self):
+    def initDiretorio(self,caminho):
         pass
 
+    @abstractmethod
+    def _getCurrFileIndex(self):
+        pass
+
+    @abstractmethod
+    def getFileList(self):
+        pass
+
+    @abstractmethod
+    def proximoArquivo(self):
+        pass
+
+    @abstractmethod
+    def anteriorArquivo(self):
+        pass
 
 class DrawableWidget(ABC):
     def __init__(self,campos):
@@ -133,7 +162,7 @@ class DrawableWidget(ABC):
         pass
 
     @abstractmethod
-    def getCampos(self):
+    def coletarDados(self):
         pass
 
 class InterfaceGrafica(ABC):
@@ -161,6 +190,8 @@ class InterfaceGrafica(ABC):
 # # functions
 
 # # main
+
+
 def main(*args, **kwargs):
     return
 

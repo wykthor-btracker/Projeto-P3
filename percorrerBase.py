@@ -28,7 +28,8 @@ class OSDiretorio(interface.Diretorio):
         self.classeArquivo(caminho).abrir()
 
     def listarArquivos(self):
-        return [self.classeArquivo(file) for file in os.listdir(self.caminho) if self.isFile(file)]
+        return [self.classeArquivo(os.path.join(self.caminho,file)) for file in os.listdir(self.caminho) if
+                self.isFile(os.path.join(self.caminho,file))]
 
     def listarDiretorios(self):
         return [OSDiretorio(folder) for folder in os.listdir(self.caminho) if self.isFolder(folder)]
@@ -37,6 +38,8 @@ class OSDiretorio(interface.Diretorio):
         os.chdir(caminho)
         self.caminho = caminho
 
+    def __repr__(self):
+        return "OSDiretorio Instance: {}".format(self.caminho)
 
 class BrowserArquivo(interface.Arquivo):
     def __init__(self,caminho):
@@ -47,6 +50,16 @@ class BrowserArquivo(interface.Arquivo):
 
     def ler(self):
         return Exception("Função não definida")
+
+    def __eq__(self, other):
+        if hasattr(other, "caminho"):
+            return self.caminho == other.caminho and isinstance(self, type(other))
+        else:
+            return False
+
+    def __contains__(self, item):
+        if isinstance(item,str):
+            return item.lower() in self.caminho.lower()
 
 # # classes
 

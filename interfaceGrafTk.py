@@ -16,6 +16,8 @@ class JanelaTkinter(interface.InterfaceGrafica):
     def __init__(self, width, height, Widgets):
         super().__init__(width, height, Widgets)
         self.rootInst = tk.Tk()
+        self.rootInst.geometry("{}x{}".format(width,height))
+        self.rootInst.attributes("-topmost", True)
 
     def desenharInterface(self):
         self.desenharWidgets()
@@ -28,7 +30,7 @@ class JanelaTkinter(interface.InterfaceGrafica):
     def coletarDados(self):
         result = {}
         for widget in self.Widgets:
-            result[widget] = widget.getCampos()
+            result[widget] = widget.coletarDados()
         return result
 
 
@@ -39,14 +41,15 @@ class Botao(interface.DrawableWidget):
         self.row = row
         self.column = column
         if args is None:
-            args = list()
+            args = list()  # Initializing mutable objects as default parameters cause them to be evaluated at compile
+            #                time, causing instances to share the mutable, instead of creating their own.
         self.args = args
         self.botao = None
 
     def draw(self, root):
         self.botao = tk.Button(root,text=self.titulo, command=lambda: self.funcao(*self.args)).grid(row=self.row, column=self.column, pady=4)
 
-    def getCampos(self):
+    def coletarDados(self):
         return self.botao
 
 
@@ -58,10 +61,10 @@ class WidgetList(interface.DrawableWidget):
         for widget in self.widgets:
             widget.draw(inst)
 
-    def getCampos(self):
+    def coletarDados(self):
         resultado = {}
         for widget in self.widgets:
-            resultado[widget.titulo] = widget.getCampos()
+            resultado[widget.titulo] = widget.coletarDados()
         return resultado
 
 
@@ -93,7 +96,7 @@ class CampoTexto(interface.DrawableWidget):
         entradaTexto.grid(row=self.row, column=1)
         self.campo = campo
 
-    def getCampos(self):
+    def coletarDados(self):
         return self.campo.get()
 
 

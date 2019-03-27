@@ -13,20 +13,20 @@ import pandas as pd
 
 
 class SalvarDados(interface.SalvarDados):
-    def __init__(self,colunas,index):
-        self.colunas = colunas
-        self.index = index
-        if index not in colunas:
-            raise Exception("{} não está em {}".format(index,colunas))
+    def __init__(self,colunas, index):
+        super().__init__(colunas, index)
         self._dataframe = pd.DataFrame(columns=colunas)
+        if index not in colunas and index is not None:
+            raise Exception("{} não está em {}".format(index,colunas))
+        self._dataframe.set_index(index)
 
     def limpar(self):
-        self.__init__(self.colunas)
+        self.__init__(self.colunas,self.index)
 
     def definirColunas(self,colunas):
         self._dataframe.columns = colunas
 
-    def update(self,linha,colunas,valores,inplace=False):
+    def update(self, linha, colunas, valores, inplace=False):
         if inplace:
             self._dataframe[linha][colunas] = valores
         else:
@@ -34,13 +34,13 @@ class SalvarDados(interface.SalvarDados):
             new[linha][colunas] = valores
             return new
 
-    def append(self,series,inplace=False):
-        if type(series) != pd.Series:
-            raise Exception("Parâmetro incorreto, {} é do tipo {}, {} esperado.".format(series,type(series),pd.Series))
+    def append(self, dicto, inplace=False):
+        if not isinstance(dicto, dict):
+            raise Exception("Parâmetro incorreto, {} é do tipo {}, {} esperado.".format(dicto, type(dicto), dict))
         if inplace:
-            self._dataframe = self._dataframe.append(series)
+            self._dataframe = self._dataframe.append(dicto,ignore_index = True)
         else:
-            return self._dataframe.copy().append(series)
+            return self._dataframe.copy().append(dicto,ignore_index = True)
 
     def find(self, value):
         if value in self._dataframe.index:
@@ -50,6 +50,9 @@ class SalvarDados(interface.SalvarDados):
 
     def getDataObject(self):
         return self._dataframe
+
+    def saveToFile(self, title):
+        self._dataframe.to_csv(title, sep=";")
 # # classes
 
 # # functions
