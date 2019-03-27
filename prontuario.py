@@ -17,16 +17,11 @@ class ColetaProntuario(Coleta):
         arquivos = [arquivo for arquivo in self.IDiretorio.listarArquivos() if "pront" in arquivo]
         return arquivos
 
-    def _getCurrFileIndex(self):
-        arquivos = self.getFileList()
-        indexAtual = arquivos.index(self._atual)
-        return arquivos, indexAtual
-
     def initSalvar(self, colunas=None, index=None):
         if colunas is None:
-            colunas = ["name", "reg", "data", "idade", "olho", "dioptria", "lente", "modelo"]
+            colunas = ["Nome", "Registro", "Data", "Idade", "Olho", "Dioptria", "Lente", "Modelo"]
         if index is None:
-            index = "name"
+            index = colunas[0]
         self.ISalvar = self.ISalvarcls(colunas, index)
 
     def initGrafico(self, width=None, height=None, widgets=None):

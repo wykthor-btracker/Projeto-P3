@@ -25,6 +25,14 @@ class Diretorio(ABC):
         pass
 
     @abstractmethod
+    def makeFileHandler(self,caminho):
+        pass
+
+    @abstractmethod
+    def makeFolderHandler(self,caminho):
+        pass
+
+    @abstractmethod
     def abrirArquivo(self,caminho):
         pass
 
@@ -44,6 +52,13 @@ class Diretorio(ABC):
     def __repr__(self):
         pass
 
+    @abstractmethod
+    def __lt__(self, other):
+        pass
+
+    @abstractmethod
+    def getFolderName(self):
+        pass
 
 class Arquivo(ABC):
     def __init__(self,caminhoRaiz):
@@ -65,6 +80,17 @@ class Arquivo(ABC):
     def __contains__(self, item):
         pass
 
+    @abstractmethod
+    def __repr__(self):
+        pass
+
+    @abstractmethod
+    def getFileName(self):
+        pass
+
+    @abstractmethod
+    def __lt__(self,other):
+        pass
 
 class SalvarDados(ABC):
     def __init__(self,colunas,index):
@@ -110,7 +136,7 @@ class Coleta(ABC):
         self.IDiretorio = None
 
     @abstractmethod
-    def abrirDiretorio(self):
+    def abrirDiretorio(self,path):
         pass
 
     @abstractmethod
@@ -118,11 +144,19 @@ class Coleta(ABC):
         pass
 
     @abstractmethod
-    def salvarDados(self):
+    def salvarDados(self, title):
+        pass
+
+    @abstractmethod
+    def adicionarDados(self, listaDeDados):
         pass
 
     @abstractmethod
     def desenharInterface(self):
+        pass
+
+    @abstractmethod
+    def fecharInterface(self):
         pass
 
     @abstractmethod
@@ -153,6 +187,7 @@ class Coleta(ABC):
     def anteriorArquivo(self):
         pass
 
+
 class DrawableWidget(ABC):
     def __init__(self,campos):
         self.campos = campos
@@ -164,6 +199,7 @@ class DrawableWidget(ABC):
     @abstractmethod
     def coletarDados(self):
         pass
+
 
 class InterfaceGrafica(ABC):
     def __init__(self,width,height,Widgets):
@@ -183,6 +219,9 @@ class InterfaceGrafica(ABC):
     def coletarDados(self):
         pass
 
+    @abstractmethod
+    def fecharInterface(self):
+        pass
 # # classes
 
 # # functions

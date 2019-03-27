@@ -16,32 +16,48 @@ import subprocess
 class OSDiretorio(interface.Diretorio):
     def __init__(self,caminho):
         super().__init__(caminho)
-        self.classeArquivo = BrowserArquivo
+        self.classeArquivo = OSArquivo
+
+    def makeFileHandler(self,caminho):
+        return self.classeArquivo(os.path.join(self.caminho,caminho))
+
+    def makeFolderHandler(self,caminho):
+        return OSDiretorio(os.path.join(self.caminho,caminho))
 
     def isFile(self,caminho):
-        return os.path.isfile(caminho)
+        return os.path.isfile(os.path.join(self.caminho, caminho))
 
     def isFolder(self,caminho):
-        return os.path.isdir(caminho)
+        return os.path.isdir(os.path.join(self.caminho, caminho))
 
     def abrirArquivo(self,caminho):
         self.classeArquivo(caminho).abrir()
 
     def listarArquivos(self):
-        return [self.classeArquivo(os.path.join(self.caminho,file)) for file in os.listdir(self.caminho) if
-                self.isFile(os.path.join(self.caminho,file))]
+        return [self.makeFileHandler(file) for file in os.listdir(self.caminho) if
+                self.isFile(file)]
 
     def listarDiretorios(self):
-        return [OSDiretorio(folder) for folder in os.listdir(self.caminho) if self.isFolder(folder)]
+        return [self.makeFolderHandler(folder) for folder in os.listdir(self.caminho) if self.isFolder(folder)]
 
     def irParaDiretorio(self,caminho):
         os.chdir(caminho)
         self.caminho = caminho
 
+    def getFolderName(self):
+        basename = self.caminho
+        basename = os.path.basename(basename)
+        return basename
+
     def __repr__(self):
         return "OSDiretorio Instance: {}".format(self.caminho)
 
-class BrowserArquivo(interface.Arquivo):
+    def __lt__(self, other):
+        if isinstance(other, type(self)) and hasattr(other, "caminho"):
+            return self.caminho < other.caminho
+
+
+class OSArquivo(interface.Arquivo):
     def __init__(self,caminho):
         super().__init__(caminho)
 
@@ -50,6 +66,13 @@ class BrowserArquivo(interface.Arquivo):
 
     def ler(self):
         return Exception("Função não definida")
+
+    def getFileName(self):
+        basename = self.caminho
+        basename = os.path.basename(basename)
+        if "." in basename:
+            basename = basename.split(".")[0]
+        return basename
 
     def __eq__(self, other):
         if hasattr(other, "caminho"):
@@ -61,6 +84,12 @@ class BrowserArquivo(interface.Arquivo):
         if isinstance(item,str):
             return item.lower() in self.caminho.lower()
 
+    def __repr__(self):
+        return "OSArquivo Instance: {}".format(self.caminho)
+
+    def __lt__(self,other):
+        if isinstance(other,type(self)) and hasattr(other,"caminho"):
+            return self.caminho < other.caminho
 # # classes
 
 # # functions

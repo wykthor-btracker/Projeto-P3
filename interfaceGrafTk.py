@@ -33,6 +33,8 @@ class JanelaTkinter(interface.InterfaceGrafica):
             result[widget] = widget.coletarDados()
         return result
 
+    def fecharInterface(self):
+        self.rootInst.destroy()
 
 class Botao(interface.DrawableWidget):
     def __init__(self,titulo, row, column, funcao,args=None):
@@ -90,10 +92,10 @@ class CampoTexto(interface.DrawableWidget):
         self.campo = None
 
     def draw(self, root):
-        tk.Label(root, text=self.titulo).grid(row=self.row)
+        tk.Label(root, text=self.titulo).grid(row=self.row,column=self.column)
         campo = tk.StringVar()
         entradaTexto = tk.Entry(root, textvariable=campo)
-        entradaTexto.grid(row=self.row, column=1)
+        entradaTexto.grid(row=self.row, column=self.column+1)
         self.campo = campo
 
     def coletarDados(self):

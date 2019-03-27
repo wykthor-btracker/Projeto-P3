@@ -36,6 +36,7 @@ class Coleta(interface.Coleta):
     def anteriorArquivo(self):
         arquivos, indexAtual = self._getCurrFileIndex()
         self._atual = arquivos[indexAtual-1%len(arquivos)]
+        self.abrirArquivo()
 
     def coletarDados(self):
         return self.IGrafico.coletarDados()
@@ -43,8 +44,15 @@ class Coleta(interface.Coleta):
     def salvarDados(self, title):
         self.ISalvar.saveToFile(title)
 
+    def adicionarDados(self,listaDeDados):
+        self.ISalvar.append(listaDeDados, True)
+        self.fecharInterface()
+
     def desenharInterface(self):
         self.IGrafico.desenharInterface()
+
+    def fecharInterface(self):
+        self.IGrafico.fecharInterface()
 # # classes
 
 # # functions
