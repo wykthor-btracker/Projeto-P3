@@ -26,11 +26,8 @@ def main(*args, **kwargs):
     iterador = OSDiretorio("Pacientes").listarDiretorios()
     print(iterador)
     for paciente in iterador:
-        pronts = sorted([arquivo for arquivo in paciente.listarArquivos() if "pront" in arquivo])
-        for pront in pronts:
-            g = JanelaTkPadrao(pront.caminho, prontuario.ColetaProntuario)
-            g.coletar()
-        break
+        g = JanelaTkPadrao(paciente.caminho, prontuario.ColetaProntuario)
+        g.coletar()
     path = "Pacientes/ABADIA RIBEIRO LUIZ/"
     f = JanelaTkPadrao(path, ficha.ColetaFicha)
     return
