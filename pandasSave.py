@@ -34,13 +34,17 @@ class SalvarDados(interface.SalvarDados):
             new[linha][colunas] = valores
             return new
 
-    def append(self, dicto, inplace=False):
-        if not isinstance(dicto, dict):
-            raise Exception("Parâmetro incorreto, {} é do tipo {}, {} esperado.".format(dicto, type(dicto), dict))
+    def append(self, dataObject, inplace=False):
         if inplace:
-            self._dataframe = self._dataframe.append(dicto,ignore_index = True)
+            try:
+                self._dataframe = self._dataframe.append(dataObject,ignore_index=True)
+            except Exception as e:
+                print(e)
         else:
-            return self._dataframe.copy().append(dicto,ignore_index = True)
+            try:
+                return self._dataframe.copy().append(dataObject,ignore_index=True)
+            except Exception as e:
+                print(e)
 
     def find(self, value):
         if value in self._dataframe.index:

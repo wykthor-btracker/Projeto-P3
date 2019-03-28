@@ -60,6 +60,7 @@ class Diretorio(ABC):
     def getFolderName(self):
         pass
 
+
 class Arquivo(ABC):
     def __init__(self,caminhoRaiz):
         self.caminho = caminhoRaiz
@@ -92,6 +93,7 @@ class Arquivo(ABC):
     def __lt__(self,other):
         pass
 
+
 class SalvarDados(ABC):
     def __init__(self,colunas,index):
         self.colunas = colunas
@@ -106,11 +108,11 @@ class SalvarDados(ABC):
         pass
 
     @abstractmethod
-    def update(self):
+    def update(self, linha, colunas, valores, inplace=False):
         pass
 
     @abstractmethod
-    def append(self):
+    def append(self, dataObject, inplace=False):
         pass
 
     @abstractmethod
@@ -148,6 +150,10 @@ class Coleta(ABC):
         pass
 
     @abstractmethod
+    def abrirArquivoAtual(self):
+        pass
+
+    @abstractmethod
     def adicionarDados(self, listaDeDados):
         pass
 
@@ -169,10 +175,6 @@ class Coleta(ABC):
 
     @abstractmethod
     def initDiretorio(self,caminho):
-        pass
-
-    @abstractmethod
-    def _getCurrFileIndex(self):
         pass
 
     @abstractmethod

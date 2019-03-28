@@ -28,7 +28,7 @@ class ColetaProntuario(Coleta):
         if widgets is None:
             raise Exception("Não tem nada para mostrar!")
         if width is None:
-            width = "500"
+            width = "300"
         if height is None:
             height = "300"
         self.IGrafico = self.IGraficacls(width,height,widgets)
@@ -37,6 +37,10 @@ class ColetaProntuario(Coleta):
         self.IDiretorio = self.IDiretoriocls(path)
         self._atual = self.getFileList()[0]
 
+
+class ValidacaoProntuario:
+    def __init__(self):
+        pass
 # # classes
 
 # # functions

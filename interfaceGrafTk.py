@@ -34,7 +34,10 @@ class JanelaTkinter(interface.InterfaceGrafica):
         return result
 
     def fecharInterface(self):
-        self.rootInst.destroy()
+        try:
+            self.rootInst.destroy()
+        except:
+            print("Interface já foi fechada")
 
 class Botao(interface.DrawableWidget):
     def __init__(self,titulo, row, column, funcao,args=None):
@@ -92,16 +95,29 @@ class CampoTexto(interface.DrawableWidget):
         self.campo = None
 
     def draw(self, root):
-        tk.Label(root, text=self.titulo).grid(row=self.row,column=self.column)
+        self._fazerLinhaTitulo(root)
+        campo = self._fazerCampoTexto(root)
+        self.campo = campo
+
+    def _fazerCampoTexto(self, root):
         campo = tk.StringVar()
         entradaTexto = tk.Entry(root, textvariable=campo)
-        entradaTexto.grid(row=self.row, column=self.column+1)
-        self.campo = campo
+        entradaTexto.grid(row=self.row, column=self.column + 1)
+        return campo
+
+    def _fazerLinhaTitulo(self, root):
+        tk.Label(root, text=self.titulo).grid(row=self.row, column=self.column)
 
     def coletarDados(self):
         return self.campo.get()
 
 
+class TextoTitulo(CampoTexto):
+    def __init__(self, titulo, row, column):
+        super().__init__(titulo, row, column)
+
+    def draw(self, root):
+        self._fazerLinhaTitulo(root)
 # # classes
 
 # # functions

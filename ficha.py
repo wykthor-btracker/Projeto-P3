@@ -2,6 +2,7 @@
 
 # # imports
 from coleta import Coleta
+import interface
 # # imports
 
 # # variables
@@ -12,6 +13,12 @@ from coleta import Coleta
 
 
 class ColetaFicha(Coleta):
+    def __init__(self, IGraficacls, IDiretoriocls, ISalvarcls, Arquivo):
+        super().__init__(IGraficacls, IDiretoriocls, ISalvarcls)
+        if not isinstance(Arquivo, interface.Arquivo):
+            raise Exception("{} é do tipo errado! Instância de {} esperado.".format(Arquivo, interface.Arquivo))
+        self.Arquivo = Arquivo
+
     def getFileList(self):
         return [arquivo for arquivo in self.IDiretorio.listarArquivos() if "atendimento" in arquivo]
 
@@ -41,6 +48,31 @@ class ColetaFicha(Coleta):
     def initDiretorio(self,caminho):
         self.IDiretorio = self.IDiretoriocls(caminho)
         self._atual = self.getFileList()[0]
+
+# How to make this better?
+
+
+class ColetaFichaPre(ColetaFicha):
+
+    def getFileList(self):
+        arquivos = self.IDiretorio.listarArquivos()
+        limit = arquivos.index(self.Arquivo)
+
+        return [arquivo
+                for arquivo in arquivos[:limit]
+                if "atendi" in arquivo]
+
+
+class ColetaFichaPos(ColetaFicha):
+
+    def getFileList(self):
+        arquivos = self.IDiretorio.listarArquivos()
+        limit = arquivos.index(self.Arquivo)
+
+        return [arquivo
+                for arquivo in arquivos[limit:]
+                if "atendi" in arquivo]
+
 
 # # classes
 

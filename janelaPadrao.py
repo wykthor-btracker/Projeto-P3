@@ -22,42 +22,48 @@ import interfaceGrafTk as iGT
 
 
 class JanelaTkPadrao:
-    def __init__(self, path, inst):
-        self.path = path
-        self.inst = inst(iGT.JanelaTkinter, OSDiretorio, SalvarDados)
+    def __init__(self, inst):
+        self.inst = inst
+
+        widgets = self.tkDrawWidgets()
+        self.inst.initGrafico(widgets=widgets)
 
     def coletarDados(self):
         dados = self.inst.coletarDados()
         for widget, fields in dados.items():
             if isinstance(widget, iGT.TextWidgets):
                 self.inst.adicionarDados(fields)
-
-    def coletar(self):
-        self.initInstances()
-        self.inst.abrirArquivo()
-        self.inst.desenharInterface()
-        return self.inst.ISalvar.getDataObject()
-
-    def initInstances(self):
-        self.inst.initSalvar()
-        self.inst.initDiretorio(self.path)
-        widgets = self.tkDrawWidgets()
-        self.inst.initGrafico(widgets=widgets)
+        self.proximoArquivo()
 
     def tkDrawWidgets(self):
         campos = iGT.TextWidgets([])
         camposTexto = self.inst.ISalvar.colunas
         campos.generateWidgets(camposTexto, iGT.CampoTexto)
-        anterior, proximo, salvar = self.tkDrawBotoes(camposTexto)
-        return [campos, salvar, proximo, anterior]
+        botoes = self.tkDrawBotoes(camposTexto)
+        return [campos]+botoes
+
+    def proximoArquivo(self):
+        self.inst.proximoArquivo()
+        self.inst.abrirArquivoAtual()
+
+    def anteriorArquivo(self):
+        self.inst.anteriorArquivo()
+        self.inst.abrirArquivoAtual()
 
     def tkDrawBotoes(self, camposTexto):
-        salvar = iGT.Botao("Ok", len(camposTexto), 0, lambda: self.coletarDados(), [])
-        anterior = iGT.Botao("Anterior", salvar.row, 1, lambda: self.inst.anteriorArquivo())
-        proximo = iGT.Botao("Proximo", salvar.row, anterior.column + 1, lambda: self.inst.proximoArquivo())
+        salvar = iGT.Botao("Salvar", len(camposTexto), 0, lambda: self.coletarDados(), [])
+        anterior = iGT.Botao("Anterior", salvar.row+1, 0, lambda: self.anteriorArquivo())
+        proximo = iGT.Botao("Proximo", anterior.row,   1, lambda: self.proximoArquivo())
+        finalizar = iGT.Botao("Finalizar", salvar.row, 1, lambda : self.inst.fecharInterface())
         # erro = gtk.Botao("Erro",proximo.row+1,0,lambda:)
-        return anterior, proximo, salvar
+        return [salvar, anterior, proximo, finalizar]
 
+
+class JanelaTkPadraoFicha(JanelaTkPadrao):
+    def tkDrawBotoes(self, camposTexto):
+        botoes = super().tkDrawBotoes(camposTexto)
+        row = max(botao.row for botao in botoes)
+        iGT.TextoTitulo("Data: {}".format(self.inst))
 
 def main():
     return None

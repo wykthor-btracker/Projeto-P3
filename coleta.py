@@ -2,7 +2,6 @@
 
 # # imports
 import interface
-from abc import abstractmethod
 # # imports
 
 # # variables
@@ -25,18 +24,16 @@ class Coleta(interface.Coleta):
     def abrirDiretorio(self, path):
         self.IDiretorio.abrirDiretorio(path)
 
-    def abrirArquivo(self):
+    def abrirArquivoAtual(self):
         self._atual.abrir()
 
     def proximoArquivo(self):
         arquivos, indexAtual = self._getCurrFileIndex()
-        self._atual = arquivos[indexAtual+1%len(arquivos)]
-        self.abrirArquivo()
+        self._atual = arquivos[(indexAtual+1) % len(arquivos)]
 
     def anteriorArquivo(self):
         arquivos, indexAtual = self._getCurrFileIndex()
-        self._atual = arquivos[indexAtual-1%len(arquivos)]
-        self.abrirArquivo()
+        self._atual = arquivos[(indexAtual-1) % len(arquivos)]
 
     def coletarDados(self):
         return self.IGrafico.coletarDados()
@@ -46,7 +43,6 @@ class Coleta(interface.Coleta):
 
     def adicionarDados(self,listaDeDados):
         self.ISalvar.append(listaDeDados, True)
-        self.fecharInterface()
 
     def desenharInterface(self):
         self.IGrafico.desenharInterface()
