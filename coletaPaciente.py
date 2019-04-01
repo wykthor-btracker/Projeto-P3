@@ -21,8 +21,8 @@ import traceback
 # # functions
 
 
-def pegarFicha(paciente, pront, inst, *args):
-    fichas = inst(iGT.JanelaTkinter, OSDiretorio, SalvarDados, pront, *args)
+def pegarFicha(paciente, pront, inst, data):
+    fichas = inst(iGT.JanelaTkinter, OSDiretorio, SalvarDados, pront, data)
     try:
         fichas.initDiretorio(paciente.caminho)
     except Exception as e:
@@ -59,10 +59,12 @@ def main(*args, **kwargs):
         pronts = coletarDados(prontuarios)
         arquivos = prontuarios.getFileList()
 
-        fichaPre = pegarFicha(paciente, arquivos[0], ficha.ColetaFichaPre)
+        data = pronts.iloc[-1]["Data"]
+
+        fichaPre = pegarFicha(paciente, arquivos[0], ficha.ColetaFichaPre, data)
         fichaPreDados = coletarDados(fichaPre)
 
-        fichaPos = pegarFicha(paciente, arquivos[-1], ficha.ColetaFichaPos)
+        fichaPos = pegarFicha(paciente, arquivos[-1], ficha.ColetaFichaPos, data)
         fichaPosDados = coletarDados(fichaPos)
 
         if fichaPre and fichaPos:

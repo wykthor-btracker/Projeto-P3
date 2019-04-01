@@ -33,7 +33,7 @@ class ColetaProntuario(Coleta):
             height = "300"
         self.IGrafico = self.IGraficacls(width,height,widgets)
 
-    def initDiretorio(self,path):
+    def initDiretorio(self, path):
         self.IDiretorio = self.IDiretoriocls(path)
         self._atual = self.getFileList()[0]
 

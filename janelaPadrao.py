@@ -68,7 +68,7 @@ class JanelaTkPadraoFicha(JanelaTkPadrao):
     def tkDrawBotoes(self, camposTexto):
         botoes = super().tkDrawBotoes(camposTexto)
         row = max(botao.row for botao in botoes)
-        data = iGT.TextoTitulo("Data = {}".format(self.inst.data), row=row+1, column=0)  # TODO FIGURE THIS OUT
+        data = iGT.TextoTitulo("Data = {}".format(self.inst.data), row=row+1, column=0)
         return botoes+[data]
 
     def coletarDados(self):

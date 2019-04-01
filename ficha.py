@@ -15,11 +15,12 @@ import interface
 
 
 class ColetaFicha(Coleta):
-    def __init__(self, IGraficacls, IDiretoriocls, ISalvarcls, Arquivo):
+    def __init__(self, IGraficacls, IDiretoriocls, ISalvarcls, Arquivo, data):
         super().__init__(IGraficacls, IDiretoriocls, ISalvarcls)
         if not isinstance(Arquivo, interface.Arquivo):
             raise Exception("{} é do tipo errado! Instância de {} esperado.".format(Arquivo, interface.Arquivo))
         self.Arquivo = Arquivo
+        self.data = data
 
     def getFileList(self):
         return [arquivo for arquivo in self.IDiretorio.listarArquivos() if "atendimento" in arquivo]
@@ -78,10 +79,6 @@ class ColetaFichaPre(ColetaFicha):
 
 
 class ColetaFichaPos(ColetaFicha):
-
-    def __init__(self, IGraficacls, IDiretoriocls, ISalvarcls, Arquivo, data):
-        super().__init__(IGraficacls, IDiretoriocls, ISalvarcls, Arquivo)
-        self.data = data
 
     def _fazerColunasPadrao(self):
         colunas = super()._fazerColunasPadrao()

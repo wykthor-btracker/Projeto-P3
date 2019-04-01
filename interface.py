@@ -104,7 +104,7 @@ class SalvarDados(ABC):
         pass
 
     @abstractmethod
-    def definirColunas(self):
+    def definirColunas(self, colunas):
         pass
 
     @abstractmethod

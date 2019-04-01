@@ -23,7 +23,7 @@ class SalvarDados(interface.SalvarDados):
     def limpar(self):
         self.__init__(self.colunas,self.index)
 
-    def definirColunas(self,colunas):
+    def definirColunas(self, colunas):
         self._dataframe.columns = colunas
 
     def update(self, linha, colunas, valores, inplace=False):
