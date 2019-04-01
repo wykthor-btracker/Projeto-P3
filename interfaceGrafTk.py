@@ -36,8 +36,9 @@ class JanelaTkinter(interface.InterfaceGrafica):
     def fecharInterface(self):
         try:
             self.rootInst.destroy()
-        except:
-            print("Interface já foi fechada")
+        except Exception as e:
+            print("Interface já foi fechada: \n{}".format(e))
+
 
 class Botao(interface.DrawableWidget):
     def __init__(self,titulo, row, column, funcao,args=None):
@@ -118,6 +119,10 @@ class TextoTitulo(CampoTexto):
 
     def draw(self, root):
         self._fazerLinhaTitulo(root)
+
+    def coletarDados(self):
+        return self.titulo
+
 # # classes
 
 # # functions

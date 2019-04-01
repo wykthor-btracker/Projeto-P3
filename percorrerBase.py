@@ -3,7 +3,9 @@
 # # imports
 import interface
 import os
-import subprocess
+import webbrowser
+
+
 # # imports
 
 # # variables
@@ -14,23 +16,23 @@ import subprocess
 
 
 class OSDiretorio(interface.Diretorio):
-    def __init__(self,caminho):
+    def __init__(self, caminho):
         super().__init__(caminho)
         self.classeArquivo = OSArquivo
 
-    def makeFileHandler(self,caminho):
-        return self.classeArquivo(os.path.join(self.caminho,caminho))
+    def makeFileHandler(self, caminho):
+        return self.classeArquivo(os.path.join(self.caminho, caminho))
 
-    def makeFolderHandler(self,caminho):
-        return OSDiretorio(os.path.join(self.caminho,caminho))
+    def makeFolderHandler(self, caminho):
+        return OSDiretorio(os.path.join(self.caminho, caminho))
 
-    def isFile(self,caminho):
+    def isFile(self, caminho):
         return os.path.isfile(os.path.join(self.caminho, caminho))
 
-    def isFolder(self,caminho):
+    def isFolder(self, caminho):
         return os.path.isdir(os.path.join(self.caminho, caminho))
 
-    def abrirArquivo(self,caminho):
+    def abrirArquivo(self, caminho):
         self.classeArquivo(caminho).abrir()
 
     def listarArquivos(self):
@@ -40,7 +42,7 @@ class OSDiretorio(interface.Diretorio):
     def listarDiretorios(self):
         return [self.makeFolderHandler(folder) for folder in os.listdir(self.caminho) if self.isFolder(folder)]
 
-    def irParaDiretorio(self,caminho):
+    def irParaDiretorio(self, caminho):
         os.chdir(caminho)
         self.caminho = caminho
 
@@ -58,11 +60,23 @@ class OSDiretorio(interface.Diretorio):
 
 
 class OSArquivo(interface.Arquivo):
-    def __init__(self,caminho):
+    def __init__(self, caminho):
         super().__init__(caminho)
+        self.instance = None
+
+        browsers = ["safari", "chrome", "firefox"]
+        for browser in browsers:
+            try:
+                self.instance = webbrowser.get(browser)
+                break
+            except Exception as e:
+                pass #TODO make logger --print e--
+
+        if self.instance is None:
+            raise Exception("Nenhum browser encontrado. Browsers tentados:\n{}".format(browsers))
 
     def abrir(self):
-        subprocess.Popen(["firefox",self.caminho])
+        self.instance.open(self.caminho, new=2)
 
     def ler(self):
         return Exception("Função não definida")
@@ -81,15 +95,17 @@ class OSArquivo(interface.Arquivo):
             return False
 
     def __contains__(self, item):
-        if isinstance(item,str):
+        if isinstance(item, str):
             return item.lower() in self.caminho.lower()
 
     def __repr__(self):
         return "OSArquivo Instance: {}".format(self.caminho)
 
-    def __lt__(self,other):
-        if isinstance(other,type(self)) and hasattr(other,"caminho"):
+    def __lt__(self, other):
+        if isinstance(other, type(self)) and hasattr(other, "caminho"):
             return self.caminho < other.caminho
+
+
 # # classes
 
 # # functions

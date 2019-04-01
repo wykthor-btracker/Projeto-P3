@@ -1,11 +1,13 @@
 # -*- encoding: utf-8 -*-
 
 # # imports
-from janelaPadrao import JanelaTkPadrao
+from janelaPadrao import JanelaTkPadraoProntuario, JanelaTkPadraoFicha
 import ficha, prontuario
 from percorrerBase import OSDiretorio
 import interfaceGrafTk as iGT
 from pandasSave import SalvarDados
+import pandas as pd
+import traceback
 # # imports
 
 # # variables
@@ -19,10 +21,23 @@ from pandasSave import SalvarDados
 # # functions
 
 
-def coletar(self):
-    self.inst.abrirArquivoAtual()
-    self.inst.desenharInterface()
-    return self.inst.ISalvar.getDataObject()
+def pegarFicha(paciente, pront, inst, *args):
+    fichas = inst(iGT.JanelaTkinter, OSDiretorio, SalvarDados, pront, *args)
+    try:
+        fichas.initDiretorio(paciente.caminho)
+    except Exception as e:
+        print("Ignorando {} devido a {}".format(paciente.caminho,e))
+        #traceback.print_exc()
+        return None
+    fichas.initSalvar()
+    JanelaTkPadraoFicha(fichas)
+    return fichas
+
+
+def coletarDados(inst):
+    inst.abrirArquivoAtual()
+    inst.desenharInterface()
+    return inst.ISalvar.getDataObject()
 # # functions
 
 # # main
@@ -30,6 +45,7 @@ def coletar(self):
 
 def main(*args, **kwargs):
     iterador = OSDiretorio("Pacientes").listarDiretorios()
+    resultados = None
     for paciente in iterador:
 
         prontuarios = prontuario.ColetaProntuario(iGT.JanelaTkinter, OSDiretorio, SalvarDados)
@@ -38,31 +54,28 @@ def main(*args, **kwargs):
 
         prontuarios.initSalvar()
 
-        JanelaTkPadrao(prontuarios)
+        JanelaTkPadraoProntuario(prontuarios)
 
-        coletarDados(prontuarios)
+        pronts = coletarDados(prontuarios)
         arquivos = prontuarios.getFileList()
 
         fichaPre = pegarFicha(paciente, arquivos[0], ficha.ColetaFichaPre)
-        coletarDados(fichaPre)
+        fichaPreDados = coletarDados(fichaPre)
 
         fichaPos = pegarFicha(paciente, arquivos[-1], ficha.ColetaFichaPos)
-        coletarDados(fichaPos)
+        fichaPosDados = coletarDados(fichaPos)
 
+        if fichaPre and fichaPos:
+            for indice, linha in pronts.iterrows():
+                fichaPreDados = fichaPreDados.T.squeeze()
+                fichaPosDados = fichaPosDados.T.squeeze()
+                concat = pd.concat([linha, fichaPreDados, fichaPosDados]).to_frame().T
+                if resultados is None:
+                    resultados = concat
+                else:
+                    resultados = resultados.append(concat)
+                print(resultados)
     return
-
-
-def coletarDados(inst):
-    inst.abrirArquivoAtual()
-    inst.desenharInterface()
-
-
-def pegarFicha(paciente, pront, inst):
-    fichas = inst(iGT.JanelaTkinter, OSDiretorio, SalvarDados, pront)
-    fichas.initDiretorio(paciente.caminho)
-    fichas.initSalvar()
-    JanelaTkPadrao(fichas)
-    return fichas
 
 
 # # main 

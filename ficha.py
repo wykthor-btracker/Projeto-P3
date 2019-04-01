@@ -3,6 +3,8 @@
 # # imports
 from coleta import Coleta
 import interface
+
+
 # # imports
 
 # # variables
@@ -24,17 +26,21 @@ class ColetaFicha(Coleta):
 
     def initSalvar(self, colunas=None, index=None):
         if colunas is None:
-            colunas = ["Esférico", "Cilindro",
-                       "Eixo", "Acuidade", "AR"]
-            OlhoEsquerdo = [campo+" OE" for campo in colunas]
-            OlhoDireito =  [campo+" OD" for campo in colunas]
-            novasColunas = ["Data"]
-            OlhoEsquerdo.extend(OlhoDireito)
-            novasColunas.extend(OlhoEsquerdo)
-            colunas = novasColunas
+            colunas = self._fazerColunasPadrao()
         if index is None:
             index = colunas[0]
         self.ISalvar = self.ISalvarcls(colunas, index)
+
+    def _fazerColunasPadrao(self):
+        colunas = ["Esférico", "Cilindro",
+                   "Eixo", "Acuidade", "AR"]
+        OlhoEsquerdo = [campo + " OE" for campo in colunas]
+        OlhoDireito = [campo + " OD" for campo in colunas]
+        novasColunas = ["Data"]
+        OlhoEsquerdo.extend(OlhoDireito)
+        novasColunas.extend(OlhoEsquerdo)
+        colunas = novasColunas
+        return colunas
 
     def initGrafico(self, width=None, height=None, widgets=None):
         if widgets is None:
@@ -43,35 +49,55 @@ class ColetaFicha(Coleta):
             width = "500"
         if height is None:
             height = "300"
-        self.IGrafico = self.IGraficacls(width,height,widgets)
+        self.IGrafico = self.IGraficacls(width, height, widgets)
 
-    def initDiretorio(self,caminho):
+    def initDiretorio(self, caminho):
         self.IDiretorio = self.IDiretoriocls(caminho)
         self._atual = self.getFileList()[0]
+
 
 # How to make this better?
 
 
 class ColetaFichaPre(ColetaFicha):
 
-    def getFileList(self):
-        arquivos = self.IDiretorio.listarArquivos()
-        limit = arquivos.index(self.Arquivo)
+    def _fazerColunasPadrao(self):
+        colunas = super()._fazerColunasPadrao()
+        return list(
+            map(
+                lambda x: "Pré-" + x, colunas))
 
-        return [arquivo
-                for arquivo in arquivos[:limit]
-                if "atendi" in arquivo]
+    def getFileList(self):
+        arquivos = self._getOrderedFileList()
+        limit = arquivos.index(self.Arquivo)
+        arquivos = [arquivo
+                    for arquivo in arquivos[limit:]
+                    if "atendi" in arquivo]
+
+        return arquivos
 
 
 class ColetaFichaPos(ColetaFicha):
 
-    def getFileList(self):
-        arquivos = self.IDiretorio.listarArquivos()
-        limit = arquivos.index(self.Arquivo)
+    def __init__(self, IGraficacls, IDiretoriocls, ISalvarcls, Arquivo, data):
+        super().__init__(IGraficacls, IDiretoriocls, ISalvarcls, Arquivo)
+        self.data = data
 
-        return [arquivo
-                for arquivo in arquivos[limit:]
-                if "atendi" in arquivo]
+    def _fazerColunasPadrao(self):
+        colunas = super()._fazerColunasPadrao()
+        return list(
+            map(
+                lambda x: "Pos-" + x, colunas
+            ))
+
+    def getFileList(self):
+        arquivos = self._getOrderedFileList()
+        limit = arquivos.index(self.Arquivo)
+        arquivos = [arquivo
+                    for arquivo in arquivos[:limit]
+                    if "atendi" in arquivo]
+
+        return arquivos
 
 
 # # classes

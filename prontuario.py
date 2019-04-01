@@ -37,10 +37,6 @@ class ColetaProntuario(Coleta):
         self.IDiretorio = self.IDiretoriocls(path)
         self._atual = self.getFileList()[0]
 
-
-class ValidacaoProntuario:
-    def __init__(self):
-        pass
 # # classes
 
 # # functions

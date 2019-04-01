@@ -21,6 +21,15 @@ class Coleta(interface.Coleta):
         indexAtual = arquivos.index(self._atual)
         return arquivos, indexAtual
 
+    def _extractFileNumber(self,file):
+        # "1 - FICHA DE ATENDIMENTO.pdf.pdf"
+        return int(file.split("-")[0].strip())
+
+    def _getOrderedFileList(self):
+        arquivos = self.IDiretorio.listarArquivos()
+        arquivos = sorted(arquivos, key=lambda arquivo: self._extractFileNumber(arquivo.getFileName()))
+        return arquivos
+
     def abrirDiretorio(self, path):
         self.IDiretorio.abrirDiretorio(path)
 
