@@ -11,8 +11,8 @@ from os import getcwd
 currDir = os.getcwd()
 patients = [];
 errors = [];
-#chrome_path = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
-chrome_path = "firefox"
+chrome_path = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
+#chrome_path = "firefox"
 stop = False
 save = False
 forward = 0
