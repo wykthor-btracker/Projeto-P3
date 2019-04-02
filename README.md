@@ -39,6 +39,7 @@ python3 script.py
 git checkout if-to-series
 python3 coletaPaciente.py
 ```
+# Funcionalidades afetadas:
 # Composite
 Para a implementação do padrão de design composite, foi desenhada uma interface(interface.InterfaceGrafica) que quando extendida, fosse capaz de conter objetos compostos e simples(interface.DrawableWidget), todos tendo a mesma propriedade, no caso específico da aplicação, foi feito de forma que a interface gráfica fosse construída modularmente.
 ![Composite](https://i.imgur.com/6qRnkXH.png)
@@ -51,5 +52,38 @@ Para a implementação do padrão de design Strategy, fiz com que o objeto que i
 Para a implementação do padrão de design Template, foi feita uma implementação para facilitar a geração de interfaces gráficas por meio da biblioteca implementada para exemplificar o funcionamento do programa: Tkinter. Um objeto JanelaPadraoTk foi criado que continha os passos necessários para desenhar a interface gráfica correspondente ao tipo de informação que se desejava coletar. Esta foi herdada para classes que continham o funcionamento diferenciado necessário para contemplar os diferentes tipos de dados encontrados em diferentes documentos de consulta/relatórios de cirurgia necessários.
 ![Template](https://i.imgur.com/MplHCi3.png)
 
-## Funcionalidades/Métodos afetados
-Todos, o código legado foi completamente reescrito para realizar o refatoramento das funcionalidades.
+## Métodos afetados
+O código legado foi majoritariamente reescrito para realizar o refatoramento das funcionalidades.
+Estrutura: método no projeto original -> interface(s) que ficou(aram) responsável por implementar a funcionalidade
+#### Métodos:
+ordenarArquivos(files) -> interface.Diretorio
+
+storeFiles() -> interface.SalvarDados
+
+createPatientDF(name) -> interface.SalvarDados
+
+getSurgeries(patientDF, files) -> interface.Coleta, interface.Diretorio
+
+storeSave(instance,flag) -> interface.SalvarDados
+
+prontuario(patientDF, currFile, totalFiles) -> interface.InterfaceGrafica, interface.SalvarDados, interface.Coleta
+
+descricoesCirurgicas() -> interface.InterfaceGrafica
+
+salvarDadosCir(reg, data, idade, olho, dioptria, lente, modelo, patientDF) -> interface.SalvarDados
+
+salvarDadosFicha(data, esfE, esfD, cilE, cilD, eixoE, eixoD, acuE, acuD, ar, patientDF, pre) -> interface.SalvarDados
+
+voltar(instance) -> interface.InterfaceGrafica
+
+avancar(instance) -> interface.InterfaceGrafica
+
+salvarErro(patientDF,instance) -> interface.SalvarDados
+
+sair(instance) -> interface.InterfaceGrafica
+
+ficha(patientDF, pre, currFile, totalFiles) -> interface.InterfaceGrafica, interface.SalvarDados, interface.Coleta
+
+quebrarLista(pronts, files) -> interface.Coleta
+
+getFichas(patientDF, fichas, boolean) -> interface.Coleta
