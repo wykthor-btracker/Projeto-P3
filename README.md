@@ -17,7 +17,6 @@ python3 script.py
 git checkout if-to-series
 python3 coletaPaciente.py
 ```
-## Padrão 1,2 e 3
 # Composite
 Para a implementação do padrão de design composite, foi desenhada uma interface(interface.InterfaceGrafica) que quando extendida, fosse capaz de conter objetos compostos e simples(interface.DrawableWidget), todos tendo a mesma propriedade, no caso específico da aplicação, foi feito de forma que a interface gráfica fosse construída modularmente.
 ![Composite](https://i.imgur.com/6qRnkXH.png)
