@@ -58,8 +58,10 @@ def main(*args, **kwargs):
 
         pronts = coletarDados(prontuarios)
         arquivos = prontuarios.getFileList()
-
-        data = pronts.iloc[-1]["Data"]
+        if not pronts.empty:
+            data = pronts.iloc[-1]["Data"]
+        else:
+            data = "00/00/0000"
 
         fichaPre = pegarFicha(paciente, arquivos[0], ficha.ColetaFichaPre, data)
         fichaPreDados = coletarDados(fichaPre)
@@ -76,7 +78,7 @@ def main(*args, **kwargs):
                     resultados = concat
                 else:
                     resultados = resultados.append(concat)
-                print(resultados)
+        resultados.to_excel("Output.xlsx")
     return
 
 

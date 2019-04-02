@@ -64,13 +64,13 @@ class OSArquivo(interface.Arquivo):
         super().__init__(caminho)
         self.instance = None
 
-        browsers = ["safari", "chrome", "firefox"]
+        browsers = ["safari", "chrome", "firefox", "macosx","mozilla", "google-chrome","windows-default"]
         for browser in browsers:
             try:
                 self.instance = webbrowser.get(browser)
                 break
             except Exception as e:
-                pass #TODO make logger --print e--
+                pass  # print(e)
 
         if self.instance is None:
             raise Exception("Nenhum browser encontrado. Browsers tentados:\n{}".format(browsers))
