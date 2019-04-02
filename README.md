@@ -3,6 +3,9 @@
 > Faz-se necessário uma aplicação que auxilie o usuário na transcrição de documentos médicos ilegíveis para processos automáticos como OCR em conjuntos de dados utilizáveis por métodos de aprendizagem de máquina, no exemplo, tabelas csv/excel.
 
 ### Erros esperados:
+
+Um arquivo(Prontuario cirurgico) foi repetido para simular o funcionamento normal das pastas esperadas, logo os prontuários cirúrgicos serão repetidos, insira OD para uma das interfaces que abrirão, e OE para a outra, no campo Olho(OE ou OD).
+
 No programa original, se a coluna Olho ou data não forem preenchidas corretamente, OE/OD(Dois prontuários são exigidos para considerar o exame válido) e ddmmyyyy ou dd/mm/yyyy ou dd-mm-yyyy, respectivamente, o programa irá levantar um erro e parar execução, ou determinar que o paciente é inválido e adicioná-lo à planilha de erros, parando a execução.
 
 ![Não encontrado](https://i.imgur.com/cB0OMTf.png)
