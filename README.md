@@ -5,6 +5,10 @@
 ### Erros esperados:
 No programa original, se a coluna Olho ou data não forem preenchidas corretamente, OE/OD(Dois prontuários são exigidos para considerar o exame válido) e ddmmyyyy ou dd/mm/yyyy ou dd-mm-yyyy, respectivamente, o programa irá levantar um erro e parar execução, ou determinar que o paciente é inválido e adicioná-lo à planilha de erros, parando a execução.
 
+![Não encontrado](https://i.imgur.com/cB0OMTf.png)
+
+Se este erro se apresentar, acesse Erros.xlsx, e delete Paciente1 da coluna Nomes, então, rode o programa original novamente.
+
 No início de script.py, na linha 14,
 ```python
 chrome_path = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
