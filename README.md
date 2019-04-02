@@ -2,6 +2,24 @@
 ### Problemática:
 > Faz-se necessário uma aplicação que auxilie o usuário na transcrição de documentos médicos ilegíveis para processos automáticos como OCR em conjuntos de dados utilizáveis por métodos de aprendizagem de máquina, no exemplo, tabelas csv/excel.
 
+### Erros esperados:
+No programa original, se a coluna Olho ou data não forem preenchidas corretamente, OE/OD(Dois prontuários são exigidos para considerar o exame válido) e ddmmyyyy ou dd/mm/yyyy ou dd-mm-yyyy, respectivamente, o programa irá levantar um erro e parar execução, ou determinar que o paciente é inválido e adicioná-lo à planilha de erros, parando a execução.
+
+No início de script.py, na linha 14,
+```python
+chrome_path = 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
+```
+Se este caminho estiver incorreto, o programa irá dar erro e parar de funcionar. Se o sistema em que está sendo testado não tiver o google chrome instalado, duas coisas podem ser feitas:
+- Instalar o chrome e usar a variável para guardar o caminho do executável
+- Apontar o caminho de algum outro executável de um navegador capaz de abrir arquivos de imagem(Firefox, safari)
+
+# Execução comum aos dois programas:
+
+Rode o programa, uma janela se abrirá com a interface, e outro com o documento desejado, busque no documento as informações tais como estarão na interface gráfica, quando tiver coletado tudo que for possível, aperte o botão salvar(para o programa refatorado, após isto, finalizar.)
+
+Outra janela se abrirá, repita o procedimento, desta vez coletando os dados da ficha de atendimento. Se encontrar os dados apenas na linha precedida por AR, marque as linhas correspondentes com 1.
+
+Repita este processo até a interface gráfica fechar, os resultados serão salvos em Outputs.xlsx .
 
 ## Projeto Original
 ### Como rodar
